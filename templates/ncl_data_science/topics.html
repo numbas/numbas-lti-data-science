@@ -1,0 +1,45 @@
+{% extends "ncl_data_science/base.html" %}
+{% load static %}
+{% load querystring %}
+{% load ncl_data_science %}
+
+{% block body_class %}topics {{block.super}}{% endblock %}
+
+{% block data_science_header %}
+{{block.super}} - Questions by topic
+{% endblock %}
+
+{% block data_science_content %}
+    <p>These pages give you the chance to practice specific topics.</p>
+
+    <h2>Pick a topic:</h2>
+    <menu id="topics" class="card-list">
+    {% for topic, progress in topics %}
+    <li class="topic card {{progress.completion_status|completion_class}}" data-completion-status="{{progress.completion_status}}">
+        <a href="{% url_with_lti 'ncl_data_science:topic' topic.pk %}">
+            <img alt="" src="{{topic.image.url}}">
+        </a>
+        <h3>
+            <a href="{% url_with_lti 'ncl_data_science:topic' topic.id %}">
+            {{topic.name}}
+            </a>
+        </h3>
+        <p class="completion">
+            {{progress.completion_status|completion_text}}
+            <progress max="1" value="{{progress.scaled_score}}"></progress>
+        </p>
+        <dl>
+            <dt>Subtopics</dt>
+            <dd>
+                <ul class="list-inline list-unstyled topics">
+                    {% for subtopic in topic.subtopics.all %}
+                    <li class="pill">{{subtopic.name}}</li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        </dl>
+    </li>
+    {% endfor %}
+    </menu>
+
+{% endblock data_science_content %}

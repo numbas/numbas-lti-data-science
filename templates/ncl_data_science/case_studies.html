@@ -1,0 +1,22 @@
+{% extends "ncl_data_science/base.html" %}
+{% load static %}
+{% load querystring %}
+{% load ncl_data_science %}
+
+{% block body_class %}case-studies {{block.super}}{% endblock %}
+
+{% block data_science_header %}
+{{block.super}} - Case Studies
+{% endblock %}
+
+{% block data_science_content %}
+    <p>Case studies give you a chance to try out some of the mathematics required in a Data Science degree, within some interesting contexts.</p>
+
+    <h2>Pick a case study:</h2>
+    <menu id="case-studies" class="card-list">
+    {% for case_study, progress in case_studies %}
+        {% include "ncl_data_science/case_study_card.html" %}
+    {% endfor %}
+    </menu>
+
+{% endblock data_science_content %}
