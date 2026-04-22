@@ -1,11 +1,14 @@
+from django.conf import settings
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import generic
+from django.utils.translation import gettext_lazy as _, gettext
 
 from .models import CaseStudy, Topic
 
 from numbas_lti.models import Resource, Attempt
-from numbas_lti.views.lti_13 import resource_launch_handlers
+import numbas_lti.views.lti_13
+from numbas_lti.views.lti_13 import resource_launch_handlers, MustBeDeepLinkMixin
 from numbas_lti.views.mixins import reverse_with_lti
 
 class IndexView(generic.TemplateView):
@@ -53,6 +56,29 @@ class TopicView(generic.DetailView):
         return context
 
 def handle_data_science_launch(view, *args, **kwargs):
-    return redirect(reverse_with_lti('ncl_data_science:case_studies'))
+    page = view.get_custom_param('page')
+    args = ()
+    if page == 'topic':
+        args = (view.get_custom_param('topic'),)
+    return redirect(view.reverse_with_lti(f'ncl_data_science:{page}', args=args))
 
 resource_launch_handlers['ncl_data_science'] = handle_data_science_launch
+
+
+class DeepLinkView(MustBeDeepLinkMixin, generic.TemplateView):
+    template_name = 'ncl_data_science/deep_link.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        context['topics'] = Topic.objects.all()
+
+        return context
+
+def deep_link_options(view):
+    context, resource_link_id = view.get_lti_context()
+
+    if context.pk in settings.NCL_DATA_SCIENCE_CONTEXTS:
+        yield ('ncl_data_science:deep_link', _('Data science material'))
+
+numbas_lti.views.lti_13.DeepLinkView.extra_options.append(deep_link_options)

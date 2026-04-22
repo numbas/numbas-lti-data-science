@@ -10,4 +10,5 @@ urlpatterns = [
     path('case-studies', views.CaseStudiesView.as_view(), name='case_studies'),
     path('by-topic', views.TopicsView.as_view(), name='topics'),
     path('topic/<int:pk>', views.TopicView.as_view(), name='topic'),
+    path('deep-link', views.DeepLinkView.as_view(), name='deep_link'),
 ]

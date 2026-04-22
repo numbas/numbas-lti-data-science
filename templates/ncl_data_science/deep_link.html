@@ -1,0 +1,59 @@
+{% extends "numbas_lti/lti_13/base.html" %}
+{% load i18n %}
+{% load querystring %}
+
+{% block body_class %}deep-link {{block.super}}{% endblock %}
+
+{% block title %}{% translate "Data Science material" %} - {{block.super}}{% endblock title %}
+
+{% block main %}
+    <div class="help-block">
+        <p>Choose a page to link to.</p>
+    </div>
+
+    <form method="POST" action="{% url_with_lti 'lti_13:deep_link_use_custom_params' %}">
+        {% csrf_token %}
+        <input type="hidden" name="title" value="Data science material">
+        <input type="hidden" name="param-name" value="view">
+        <input type="hidden" name="param-value" value="ncl_data_science">
+        <input type="hidden" name="param-name" value="page">
+        <input type="hidden" name="param-value" value="index">
+        <button class="button link" type="submit">Index</button>
+    </form>
+
+    <form method="POST" action="{% url_with_lti 'lti_13:deep_link_use_custom_params' %}">
+        {% csrf_token %}
+        <input type="hidden" name="title" value="Case studies">
+        <input type="hidden" name="param-name" value="view">
+        <input type="hidden" name="param-value" value="ncl_data_science">
+        <input type="hidden" name="param-name" value="page">
+        <input type="hidden" name="param-value" value="case_studies">
+        <button class="button link" type="submit">Case studies</button>
+    </form>
+
+    <form method="POST" action="{% url_with_lti 'lti_13:deep_link_use_custom_params' %}">
+        {% csrf_token %}
+        <input type="hidden" name="title" value="Topics">
+        <input type="hidden" name="param-name" value="view">
+        <input type="hidden" name="param-value" value="ncl_data_science">
+        <input type="hidden" name="param-name" value="page">
+        <input type="hidden" name="param-value" value="topics">
+        <button class="button link" type="submit">Topics</button>
+    </form>
+
+    <h2>Topics</h2>
+
+    {% for topic in topics %}
+    <form method="POST" action="{% url_with_lti 'lti_13:deep_link_use_custom_params' %}">
+        {% csrf_token %}
+        <input type="hidden" name="title" value="{{topic.name}}">
+        <input type="hidden" name="param-name" value="view">
+        <input type="hidden" name="param-value" value="ncl_data_science">
+        <input type="hidden" name="param-name" value="page">
+        <input type="hidden" name="param-value" value="topic">
+        <input type="hidden" name="param-name" value="topic">
+        <input type="hidden" name="param-value" value="{{topic.pk}}">
+        <button class="button link" type="submit">{{topic.name}}</button>
+    </form>
+    {% endfor %}
+{% endblock main %}
