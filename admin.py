@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.contrib import admin
 
 from .models import Subtopic, Topic, CaseStudy, CaseStudyTopic
+from numbas_lti.models import Resource
 
 class CaseStudyTopicInline(admin.TabularInline):
     model = CaseStudyTopic
@@ -16,4 +18,9 @@ class SubtopicInline(admin.TabularInline):
 class TopicAdmin(admin.ModelAdmin):
     inlines = [ SubtopicInline ]
 
-admin.site.register(Subtopic)
+@admin.register(Subtopic)
+class SubtopicAdmin(admin.ModelAdmin):
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'resource':
+            kwargs['queryset'] = Resource.objects.filter(lti_13_links__context__in=settings.NCL_DATA_SCIENCE_CONTEXTS)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
