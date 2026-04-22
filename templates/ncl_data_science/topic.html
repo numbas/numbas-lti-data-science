@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block data_science_content %}
-    <p>{{topic.description}}</p>
+    <p>{{topic.description|safe}}</p>
 
     <p class="{{topic_progress.completion_status|completion_class}}"><progress max="1" value="{{topic_progress.scaled_score}}"></progress> {{topic_progress.completion_status|completion_text}}</p>
 
