@@ -7,8 +7,15 @@ from numbas_lti.models import Resource
 class CaseStudyTopicInline(admin.TabularInline):
     model = CaseStudyTopic
 
+class LimitResourcesMixin:
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        print("?????")
+        if db_field.name == 'resource':
+            kwargs['queryset'] = Resource.objects.filter(lti_13_links__context__in=settings.NCL_DATA_SCIENCE_CONTEXTS)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 @admin.register(CaseStudy)
-class CaseStudyAdmin(admin.ModelAdmin):
+class CaseStudyAdmin(LimitResourcesMixin, admin.ModelAdmin):
     inlines = [ CaseStudyTopicInline ]
 
 class SubtopicInline(admin.TabularInline):
@@ -19,8 +26,5 @@ class TopicAdmin(admin.ModelAdmin):
     inlines = [ SubtopicInline ]
 
 @admin.register(Subtopic)
-class SubtopicAdmin(admin.ModelAdmin):
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == 'resource':
-            kwargs['queryset'] = Resource.objects.filter(lti_13_links__context__in=settings.NCL_DATA_SCIENCE_CONTEXTS)
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+class SubtopicAdmin(LimitResourcesMixin, admin.ModelAdmin):
+    pass
