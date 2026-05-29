@@ -87,10 +87,12 @@ class CaseStudy(models.Model, HasProgressMixin):
     image = models.ImageField(upload_to='ncl_data_science/case_studies')
     topics = models.ManyToManyField(Topic, blank=True, related_name='case_studies', through='CaseStudyTopic')
     resource = models.ForeignKey(Resource, null=True, blank=True, related_name='data_science_case_studies', on_delete=models.SET_NULL)
+    position = models.IntegerField(default=0)
 
     class Meta:
         verbose_name = 'Case study'
         verbose_name_plural = 'Case studies'
+        ordering = ['position', 'pk']
 
     def __str__(self):
         return self.name
